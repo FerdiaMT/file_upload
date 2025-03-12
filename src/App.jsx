@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import axios from "axios";
+import './App.css'
 
 const App = () => {
+
     const [file, setFile] = useState(null); // where im storing the selected file
-    const [fromLang, setFromLang] = useState("");
-    const [toLang , setToLang] = useState("");
+    const [fromLang, setFromLang] = useState("English");
+    const [toLang , setToLang] = useState("English");
 
     const handleFileChange = (e) => {
 
@@ -18,7 +20,7 @@ const App = () => {
       // this will also be some api work
       // for now its going to default to english
       // axios.post("detectLang"); <- for later
-      setFromLang("English");
+      //setFromLang("English");
     };
 
     const handleOptionChange = (direction) => (e) => {
@@ -32,53 +34,58 @@ const App = () => {
 
 
     const handleUpload = () => {
+      if (!file){
+        alert("No file has been selected");
+        return; // give up here if no file present
+      }
 
-        if (!file){
-          alert("No file has been selected");
-          return; // give up here if no file present
-        }
+      if(!file.name.endsWith('.vtt')){
+        alert("File must end with .vtt");
+        return; // add more to here later
+      }
 
-        if(!file.name.endsWith('.vtt')){
-          alert("File must end with .vtt");
-          return; // add more to here later
-        }
+      const formData = new FormData(); // formData object
+      formData.append("myFile", file); 
+      formData.append("fromLang", fromLang); 
+      formData.append("toLang", toLang); 
 
-
-        const formData = new FormData(); // formData object
-        formData.append("myFile", file, file.name); 
-        formData.append("fromLang", fromLang); 
-        formData.append("toLang", toLang); 
-
-        axios.post("yuwenapi/upload", formData) // send to yuwen api
-        alert("File uploaded sucesfully");
+      console.log(formData.get("myFile"))
+      console.log(formData.get("fromLang"));
+      console.log(formData.get("toLang"));
+      // axios.post("yuwenapi/upload", formData) // send to yuwen api
+      alert("File uploaded sucesfully");
     };
 
     return (
-        <div>
-            <h1>Deliverable 1.2</h1>
-            <input type="file" onChange={handleFileChange} /> 
-            <button onClick={handleUpload}>Translate</button> 
+      <div className = "mainBox">
+          <h1 class = "b">Deliverable 1.2</h1>
+          <input type="file" onChange={handleFileChange} /> 
+          <button onClick={handleUpload}>Translate</button> 
 
-            <select value={fromLang} onChange={handleOptionChange('from')}>
-                <option value="">From</option>
-                <option value="option1">English</option>
-                <option value="option2">Irish</option>
-                <option value="option3">French</option>
-                <option value="option4">German</option>
-            </select>
+          <br></br>
+          <label >
+          <select value={fromLang} onChange={handleOptionChange('from')}>
+              
+              <option value="English">English</option>
+              <option value="Irish">Irish</option>
+              <option value="French">French</option>
+              <option value="German">German</option>
+          </select>
 
-            <select value={toLang} onChange={handleOptionChange('to')}>
-                <option value="">To</option>
-                <option value="option1">English</option>
-                <option value="option2">Irish</option>
-                <option value="option3">French</option>
-                <option value="option4">German</option>
-            </select>
+          </label>
+
+          <select value={toLang} onChange={handleOptionChange('to')}>
+              
+              <option value="English">English</option>
+              <option value="Irish">Irish</option>
+              <option value="French">French</option>
+              <option value="German">German</option>
+          </select>
 
 
-            {file&& <p>{file.name}</p>}
-        </div>
-    );
+          {file&& <p>{file.name}</p>}
+      </div>
+  );
 };
-
 export default App;
+
